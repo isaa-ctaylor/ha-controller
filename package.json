@@ -1,8 +1,8 @@
 {
   "name": "ha-controller",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "GPL-3.0-only",
   "devDependencies": {
     "@fitbit/sdk": "~6.1.0",
     "@fitbit/sdk-cli": "^1.7.3"
