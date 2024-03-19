@@ -7,7 +7,7 @@ registerSettingsPage(({ settings }) => (
     <TextInput
       label="API Key"
       settingsKey="key"
-      // type="password"
+      type="password"
     />
   </Page >
 ));
