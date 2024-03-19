@@ -1,0 +1,50 @@
+<svg>
+  <svg id="loading" height="100%" width="100%">
+    <rect x="0" y="0" width="100%" height="100%" fill="black" />
+    <text id="phoning-home" x="52%" y="50%" fill="white" font-family="System-Regular" font-size="30">Phoning home...</text>
+  </svg>
+  <use id="myList" href="#tile-list" display="none">
+    <var id="virtual" value="1" />
+    <var id="reorder-enabled" value="0" />
+    <var id="peek-enabled" value="0" />
+    <var id="separator-height-bottom" value="2" />
+
+    <use id="my-pool" href="#tile-list-pool">
+      <use id="my-pool[0]" href="#my-item" />
+      <use id="my-pool[1]" href="#my-item" />
+      <use id="my-pool[2]" href="#my-item" />
+      <use id="my-pool[3]" href="#my-item" />
+      <use id="my-pool[4]" href="#my-item" />
+      <use id="my-pool[5]" href="#my-item" />
+      <use id="my-pool[6]" href="#my-item" />
+      <use id="my-pool[7]" href="#my-item" />
+      <use id="my-pool[8]" href="#my-item" />
+      <use id="my-pool[9]" href="#my-item" />
+      <use id="my-pool[10]" href="#my-item" />
+      <use id="my-pool[11]" href="#my-item" />
+      <use id="my-pool[12]" href="#my-item" />
+      <use id="my-pool[13]" href="#my-item" />
+      <use id="my-pool[14]" href="#my-item" />
+    </use>
+  </use>
+  
+  <!-- <svg id="complex-light-control" visibility="hidden">
+    <rect class="bg" />
+    <svg id="back-button" pointer-events="visible">
+      <circle cx="50%" cy="50%" r="50%" />
+      <image id="image" x="50%-24" y="50%-24" width="48" height="48" href="arrow-back-g.png" />
+    </svg>
+    <svg id="colour-select-white" pointer-events="visible">
+      <circle cx="50%" cy="50%" r="50%" fill="#9e9e9e" />
+      <circle cx="50%" cy="50%" r="45%" fill="white" opacity="0.5"/>
+    </svg>
+    <svg id="colour-select-red" pointer-events="visible">
+      <circle cx="50%" cy="50%" r="50%" fill="#9e9e9e" />
+      <circle cx="50%" cy="50%" r="45%" fill="red" opacity="0.5"/>
+    </svg>
+    <svg id="colour-select-green" pointer-events="visible">
+      <circle cx="50%" cy="50%" r="50%" fill="#9e9e9e" />
+      <circle cx="50%" cy="50%" r="45%" fill="green" opacity="0.5"/>
+    </svg>
+  </svg> -->
+</svg>

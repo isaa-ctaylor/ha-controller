@@ -1,0 +1,21 @@
+<svg>
+  <defs>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="import" href="/mnt/sysassets/system_widget.defs" />
+
+    <link rel="import" href="/mnt/sysassets/widgets/baseview_widget.defs" />
+    <link rel="import" href="/mnt/sysassets/widgets/scrollbar.defs" />
+    <link rel="import" href="/mnt/sysassets/widgets/tile_list_widget.defs" />
+
+    <link rel="import" href="/mnt/sysassets/widgets/icon_button.defs" />
+
+    <symbol id="my-item" href="#tile-list-item" class="list-item" display="none">
+      <text id="text" />
+      <svg id="toggle-button" pointer-events="visible">
+        <circle cx="50%" cy="50%" r="50%" />
+        <image id="image" x="50%-24" y="50%-24" width="48" height="48" />
+      </svg>
+      <rect class="line" />
+    </symbol>
+  </defs>
+</svg>

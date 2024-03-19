@@ -1,0 +1,32 @@
+{
+  "name": "ha-controller",
+  "version": "0.1.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@fitbit/sdk": "~6.1.0",
+    "@fitbit/sdk-cli": "^1.7.3"
+  },
+  "fitbit": {
+    "appUUID": "1f78f2b5-2ba3-448b-b1ef-b45fa6f73c10",
+    "appType": "app",
+    "appDisplayName": "HA controller",
+    "iconFile": "resources/icon.png",
+    "wipeColor": "#ffc107",
+    "requestedPermissions": [
+      "access_internet"
+    ],
+    "buildTargets": [
+      "vulcan"
+    ],
+    "i18n": {},
+    "defaultLanguage": "en-US"
+  },
+  "scripts": {
+    "build": "fitbit-build",
+    "debug": "fitbit"
+  },
+  "dependencies": {
+    "fitbit-gestures": "^1.0.2"
+  }
+}
