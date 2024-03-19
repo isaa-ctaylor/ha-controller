@@ -94,12 +94,3 @@ peerSocket.addEventListener("message", (evt) => {
         })
     }
 });
-
-
-
-// function discoveryLoop() {
-//     fetchDevices();
-//     setTimeout(discoveryLoop, 60000);
-// }
-
-// discoveryLoop();
