@@ -1,20 +1,19 @@
 import { settingsStorage } from "settings";
 import { peerSocket } from "messaging";
 
-const URL = JSON.parse(settingsStorage.getItem("url"));
-const KEY = JSON.parse(settingsStorage.getItem("key"));
+const URL = JSON.parse(settingsStorage.getItem("url")).name;
+const KEY = JSON.parse(settingsStorage.getItem("key")).name;
 
-
-if (!URL.name) {
+if (!URL) {
     console.error("No url provided! Notifying user...");
     // TODO: Error message on screen
 }
-if (!KEY.name) {
+if (!KEY) {
     console.error("No key provided! Notifying user...");
     // TODO: Error message on screen
 }
 
-const WSURL = "wss://" + URL.name + "/api/websocket";
+const WSURL = "wss://" + URL + "/api/websocket";
 const websocket = new WebSocket(WSURL);
 
 websocket.addEventListener("message", onMessage);
@@ -23,13 +22,14 @@ function onMessage(evt) {
     let data = JSON.parse(evt.data);
 
     if (data.type == "auth_required") {
-        websocket.send(JSON.stringify({ "type": "auth", "access_token": KEY.name }));
+        websocket.send(JSON.stringify({ "type": "auth", "access_token": KEY }));
     }
     if (data.type == "auth_ok") {
         websocket.send(JSON.stringify({ "id": 1, "type": "subscribe_events", "event_type": "state_changed" }));
     }
     if (data.type == "auth_invalid") {
         console.error("Websocket auth invalid!")
+        peerSocket.send({"command": "error", "data": "Invalid access token!"})
     }
     if (data.type == "event") {
         if (data.event.data.entity_id.startsWith("light.")) {
@@ -43,10 +43,10 @@ console.log("Max message size=" + peerSocket.MAX_MESSAGE_SIZE);
 
 function fetchDevices() {
     console.log("Fetching device data...");
-    let url = "https://" + URL.name + "/api/states";
+    let url = "https://" + URL + "/api/states";
     fetch(url, {
         method: "GET",
-        headers: { Authorization: 'Bearer ' + KEY.name }
+        headers: { Authorization: 'Bearer ' + KEY }
     }).then(function (response) {
         if (!response.ok) {
             return Promise.reject(response);
@@ -70,20 +70,28 @@ function fetchDevices() {
             return 0;
         })
         peerSocket.send({ "command": "fetch", "data": ret });
+    }).catch((r) => {
+        peerSocket.send({"command": "error", "data": "Failed to connect - check URL"})
     });
 };
 
 peerSocket.addEventListener("message", (evt) => {
     if (evt.data.command == "fetch") {
-        fetchDevices();
+        if (!URL) {
+            peerSocket.send({ "command": "error", "data": "Homeassistant URL not provided!"})
+        } else if (!KEY) {
+            peerSocket.send({ "command": "error", "data": "Access token not provided!"})
+        } else {
+            fetchDevices();
+        }
     } else if (evt.data.command == "toggle") {
         let entity_id = evt.data.data.entity_id;
 
-        let url = "https://" + URL.name + "/api/services/light/toggle"
+        let url = "https://" + URL + "/api/services/light/toggle"
 
         fetch(url, {
             method: "POST",
-            headers: { Authorization: 'Bearer ' + KEY.name },
+            headers: { Authorization: 'Bearer ' + KEY },
             body: JSON.stringify({ "entity_id": entity_id })
         }).then(function (response) {
             if (!response.ok) {
