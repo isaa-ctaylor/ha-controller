@@ -1,10 +1,10 @@
 import * as document from "document";
 import { peerSocket } from "messaging";
 import { vibration } from "haptics";
-import { LongPressDetector } from "fitbit-gestures";
 
-let myList = document.getElementById("myList");
+let lightsList = document.getElementById("lightsList");
 let loading = document.getElementById("loading");
+let error = document.getElementById("error");
 
 let NUM_ELEMS = 0;
 
@@ -20,15 +20,13 @@ peerSocket.addEventListener("error", (err) => {
 let lights = [];
 let tiles = [];
 
-let currentEntity = "";
-
 peerSocket.addEventListener("message", (evt) => {
     if (evt.data.command == "fetch") {
         lights = evt.data.data;
         NUM_ELEMS = lights.length;
         loading.style.display = "none";
-        myList.style.display = "inline";
-        myList.delegate = {
+        lightsList.style.display = "inline";
+        lightsList.delegate = {
             getTileInfo: (index) => {
                 return {
                     type: "my-pool",
@@ -46,18 +44,9 @@ peerSocket.addEventListener("message", (evt) => {
                     tile.getElementById("text").text = `${info.friendly_name}`;
                     let button = tile.getElementById("toggle-button");
                     tiles.push(button);
-                    // if (JSON.stringify(info.supported_colour_modes) !== JSON.stringify(["onoff"])) {
-                    //     function onLongPress() {
-                    //         currentEntity = info.entity_id;
-                    //         console.log(currentEntity);
-                    //         document.getElementById("complex-light-control").style.visibility = "visible";
-                    //     }
-                    //     let longPress = new LongPressDetector(button, onLongPress.bind(this));
-                    // }
                     if (info.state == "on") {
                         let img = button.getElementById("image");
                         img.style.fill = "#ffc107";
-                        img.href = "lightbulb-on-g.png";
 
                         let bg = button.getElementsByTagName("circle")[0];
                         bg.style.fill = "#ffc107";
@@ -72,22 +61,22 @@ peerSocket.addEventListener("message", (evt) => {
         };
 
         // length must be set AFTER delegate
-        myList.length = NUM_ELEMS;
+        lightsList.length = NUM_ELEMS;
     } else if (evt.data.command == "update") {
         lights.every((item, index) => {
             if (item[0] == evt.data.data.entity_id) {
                 let button = tiles[index];
                 let img = button.getElementById("image");
                 img.style.fill = (evt.data.data.state == "on") ? "#ffc107" : "#9e9e9e";
-                img.href = (evt.data.data.state == "on") ? "lightbulb-on-g.png" : "lightbulb-off-g.png";
+                // img.href = (evt.data.data.state == "on") ? "lightbulb-on-g.png" : "lightbulb-off-g.png";
                 let bg = button.getElementsByTagName("circle")[0];
                 bg.style.fill = (evt.data.data.state == "on") ? "#ffc107" : "#9e9e9e";
                 return false;
             }
             return true;
         })
+    } else if (evt.data.command == "error") {
+        document.getElementById("error-message").text = evt.data.data;
+        error.style.display = "inline";
     };
 });
-
-// document.getElementById("back-button").getElementById("image").href = "arrow-back-g.png";
-
