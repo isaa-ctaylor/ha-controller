@@ -6,11 +6,9 @@ const KEY = JSON.parse(settingsStorage.getItem("key")).name;
 
 if (!URL) {
     console.error("No url provided! Notifying user...");
-    // TODO: Error message on screen
 }
 if (!KEY) {
     console.error("No key provided! Notifying user...");
-    // TODO: Error message on screen
 }
 
 const WSURL = "wss://" + URL + "/api/websocket";
