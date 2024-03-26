@@ -41,9 +41,9 @@ peerSocket.addEventListener("message", (evt) => {
             },
             configureTile: (tile, info) => {
                 if (info.type == "my-pool") {
-                    tile.getElementById("text").text = `${info.friendly_name}`;
+                    tile.getElementById("name").text = `${info.friendly_name}`;
+                    tiles.push(tile);
                     let button = tile.getElementById("toggle-button");
-                    tiles.push(button);
                     if (info.state == "on") {
                         let img = button.getElementById("image");
                         img.style.fill = "#ffc107";
@@ -65,7 +65,8 @@ peerSocket.addEventListener("message", (evt) => {
     } else if (evt.data.command == "update") {
         lights.every((item, index) => {
             if (item[0] == evt.data.data.entity_id) {
-                let button = tiles[index];
+                let tile = tiles[index];
+                let button = tile.getElementById("toggle-button");
                 let img = button.getElementById("image");
                 img.style.fill = (evt.data.data.state == "on") ? "#ffc107" : "#9e9e9e";
                 // img.href = (evt.data.data.state == "on") ? "lightbulb-on-g.png" : "lightbulb-off-g.png";
