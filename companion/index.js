@@ -74,6 +74,7 @@ function fetchDevices() {
 };
 
 peerSocket.addEventListener("message", (evt) => {
+    console.log(evt.data);
     if (evt.data.command == "fetch") {
         if (!URL) {
             peerSocket.send({ "command": "error", "data": "Homeassistant URL not provided!"})
