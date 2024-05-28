@@ -1,6 +1,39 @@
 <svg>
-    <svg id="light-button" pointer-events="visible">
-        <circle cx="50%" cy="50%" r="50%" />
-        <image id="image" x="50%-24" y="50%-24" width="48" height="48" href="bulb-g.png" />
+    <svg id="loading" height="100%" width="100%">
+        <rect x="0" y="0" width="100%" height="100%" fill="black" />
+        <text id="phoning-home" x="52%" y="50%" fill="white" font-family="System-Regular" font-size="30">Phoning home...</text>
+    </svg>
+    <svg id="area-list" height="100%" width="100%">
+        <rect id="bg" x="0" y="0" width="100%" height="100%" fill="#111111" display="none" />
+        <use id="areaList" href="#tile-list">
+            <var id="virtual" value="1" />
+            <var id="reorder-enabled" value="0" />
+            <var id="peek-enabled" value="0" />
+            <var id="separator-height-bottom" value="2" />
+
+            <use id="my-pool" href="#tile-list-pool">
+                <use id="my-pool[0]" href="#area-item" />
+                <use id="my-pool[1]" href="#area-item" />
+                <use id="my-pool[2]" href="#area-item" />
+                <use id="my-pool[3]" href="#area-item" />
+                <use id="my-pool[4]" href="#area-item" />
+                <use id="my-pool[5]" href="#area-item" />
+                <use id="my-pool[6]" href="#area-item" />
+                <use id="my-pool[7]" href="#area-item" />
+                <use id="my-pool[8]" href="#area-item" />
+                <use id="my-pool[9]" href="#area-item" />
+                <use id="my-pool[10]" href="#area-item" />
+                <use id="my-pool[11]" href="#area-item" />
+                <use id="my-pool[12]" href="#area-item" />
+                <use id="my-pool[13]" href="#area-item" />
+                <use id="my-pool[14]" href="#area-item" />
+            </use>
+        </use>
+    </svg>
+    <svg id="error" height="100%" width="100%" display="none">
+        <rect x="0" y="0" width="100%" height="100%" fill="black" />
+        <image x="50%-36" y="40%-36" width="72" height="72" href="error-g.png" fill="#ff0000" />
+        <textarea id="error-message" text-anchor="middle" x="0%" y="60%" fill="white" font-family="System-Regular"
+            font-size="20" text-length="64" />
     </svg>
 </svg>
