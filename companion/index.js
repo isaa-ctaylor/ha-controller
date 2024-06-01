@@ -13,7 +13,7 @@ if (!KEY) {
 }
 
 const WSURL = "wss://" + URL + "/api/websocket";
-const websocket = new WebSocket(WSURL);
+var websocket;
 
 const entityListEnum = 1;
 const deviceStatesEnum = 3;
@@ -40,12 +40,17 @@ function splitJsonObject(jsonObject, chunkSize) {
 
 function sendChunk(chunk, index, totalChunks) {
     if (peerSocket.readyState === peerSocket.OPEN) {
-        peerSocket.send({
-            type: "chunk",
-            index: index,
-            totalChunks: totalChunks,
-            data: chunk
-        });
+        console.log(`Sending chunk ${index}`);
+        setTimeout(() => {
+            peerSocket.send({
+                type: "chunk",
+                index: index,
+                totalChunks: totalChunks,
+                data: chunk
+            })
+        }, 500);
+    } else {
+        console.log(`Error sending chunk ${index}`);
     }
 }
 
@@ -67,11 +72,13 @@ console.log("Max message size=" + peerSocket.MAX_MESSAGE_SIZE);
 
 peerSocket.addEventListener("message", (evt) => {
     let message = evt.data;
-    console.log(message);
+    console.log(JSON.stringify(message));
     if (message.type == "fetch") {
-        websocket.addEventListener("error", websocketError);
+        websocket = new WebSocket(WSURL);
         websocket.addEventListener("message", onMessage);
-
+        websocket.addEventListener("open", (evt) => { console.log("Websocket open") })
+        websocket.addEventListener("error", websocketError);
+        // websocket.send(JSON.stringify({ type: "auth", access_token: KEY }));
         function websocketError(evt) {
             peerSocket.send({ type: "error", message: "Websocket connection failed!\nPlease check URL in settings." })
         }
@@ -88,9 +95,11 @@ peerSocket.addEventListener("message", (evt) => {
             // console.log(data);
 
             if (data.type == "auth_required") {
+                console.log("Auth required");
                 websocket.send(JSON.stringify({ type: "auth", access_token: KEY }));
             }
             if (data.type == "auth_ok") {
+                console.log("Auth ok");
                 websocket.send(JSON.stringify({ id: entityListEnum, type: "config/entity_registry/list" }))
                 websocket.send(JSON.stringify({ id: 2, type: "subscribe_events", event_type: "state_changed" }));
             }
@@ -194,9 +203,7 @@ peerSocket.addEventListener("message", (evt) => {
                 }
             }
         }
-    }
-
-    if (message.type == "command") {
+    } else if (message.type == "command") {
         let entity_id = message.entity_id;
 
         if (message.domain == "light") {
