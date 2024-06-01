@@ -1,14 +1,14 @@
 import * as document from "document";
 import { peerSocket } from "messaging";
-import { inbox } from "file-transfer";
-import { readFileSync } from "fs";
-import { decode } from "cbor";
 import { vibration } from "haptics";
-import { LongPressDetector } from "fitbit-gestures";
+// import { LongPressDetector } from "fitbit-gestures";
 
 peerSocket.addEventListener("open", (evt) => {
     console.log("Device connected");
-    peerSocket.send({ type: "fetch" });
+    document.getElementById("status").text = "Phone connected."
+    setTimeout(() => {
+        peerSocket.send({ type: "fetch" });
+    }, 1000);
 })
 
 peerSocket.addEventListener("error", (err) => {
@@ -19,6 +19,7 @@ peerSocket.addEventListener("error", (err) => {
 var receivedChunks = [];
 var totalChunksExpected = null;
 var tiles = [];
+var areas;
 
 function truncate(input, length) {
     if (input.length > length) {
@@ -27,31 +28,16 @@ function truncate(input, length) {
     return input;
 }
 
-// function sortNoArea(jsonObj) {
-//     // Specify the key to force to the bottom
-//     let keyToBottom = "No Area";
-//     console.log(jsonObj);
-//     let entries = Object.entries(jsonObj);
-//     console.log(entries);
-//     entries.sort(([key1], [key2]) => {
-//         if (key1 === keyToBottom) return 1;
-//         if (key2 === keyToBottom) return -1;
-//         return key1.localeCompare(key2);
-//     });
-
-//     let sortedJsonObj = Object.fromEntries(entries);
-
-//     return sortedJsonObj;
-// }
-
 peerSocket.onmessage = (evt) => {
     const message = evt.data;
 
     if (message.type === "chunk") {
         receivedChunks[message.index] = message.data;
+        document.getElementById("status").text = `Recieved ${receivedChunks.length}/${message.totalChunks} chunk(s)`
 
         if (totalChunksExpected === null) {
             totalChunksExpected = message.totalChunks;
+            // console.log(totalChunksExpected);
         }
 
         // Check if all chunks have been received
@@ -69,7 +55,7 @@ peerSocket.onmessage = (evt) => {
 
             // let areas = sortNoArea(jsonObject);
 
-            let areas = jsonObject;
+            areas = jsonObject;
 
             let areaList = document.getElementById("areaList");
             document.getElementById("bg").style.display = "inline";
@@ -172,6 +158,16 @@ peerSocket.onmessage = (evt) => {
         document.getElementById("error-message").text = message.message;
         error.style.display = "inline";
     } else if (evt.data.type == "update") {
+        for (let key in areas) {
+            if (areas.hasOwnProperty(key)) {
+                let array = areas[key];
+                for (let i = 0; i < array.length; i++) {
+                    if (array[i].entity_id == evt.data.entity_id) {
+                        areas[key][i].state = evt.data.state;
+                    }
+                }
+            }
+        }
         tiles.forEach((tile) => {
             if (tile.data_entity_id == evt.data.entity_id) {
                 let button = tile.getElementById("toggle-button");
