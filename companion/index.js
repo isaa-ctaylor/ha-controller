@@ -24,6 +24,9 @@ var websocketIndex = 5;
 
 const PATTERN = /^light\.|^switch\.|^button\./
 
+var session;
+var resolvedAreaMapping;
+
 var devices = {};
 var areaMapping = {};
 
@@ -46,7 +49,8 @@ function sendChunk(chunk, index, totalChunks) {
                 type: "chunk",
                 index: index,
                 totalChunks: totalChunks,
-                data: chunk
+                data: chunk,
+                session: session
             })
         }, 500);
     } else {
@@ -55,6 +59,7 @@ function sendChunk(chunk, index, totalChunks) {
 }
 
 function sendJsonObjectInChunks(jsonObject) {
+    console.log("Sending chunks");
     const chunkSize = 500; // Adjust size according to your needs
     const chunks = splitJsonObject(jsonObject, chunkSize);
     const totalChunks = chunks.length;
@@ -66,14 +71,8 @@ function sendJsonObjectInChunks(jsonObject) {
 
 peerSocket.addEventListener("open", (evt) => {
     console.log("Companion connected.");
-})
-
-console.log("Max message size=" + peerSocket.MAX_MESSAGE_SIZE);
-
-peerSocket.addEventListener("message", (evt) => {
-    let message = evt.data;
-    console.log(JSON.stringify(message));
-    if (message.type == "fetch") {
+    if (websocket == undefined) {
+        console.log("Initialising websocket...");
         websocket = new WebSocket(WSURL);
         websocket.addEventListener("message", onMessage);
         websocket.addEventListener("open", (evt) => { console.log("Websocket open") })
@@ -81,13 +80,6 @@ peerSocket.addEventListener("message", (evt) => {
         // websocket.send(JSON.stringify({ type: "auth", access_token: KEY }));
         function websocketError(evt) {
             peerSocket.send({ type: "error", message: "Websocket connection failed!\nPlease check URL in settings." })
-        }
-
-
-        if (!URL) {
-            peerSocket.send({ type: "error", message: "No URL provided!" });
-        } else if (!KEY) {
-            peerSocket.send({ type: "error", message: "No API key provided!" });
         }
 
         function onMessage(evt) {
@@ -180,7 +172,7 @@ peerSocket.addEventListener("message", (evt) => {
 
                     // console.log(areaMapping)
 
-                    let resolvedAreaMapping = {};
+                    resolvedAreaMapping = {};
                     let noArea = [];
 
                     for (const [key, value] of Object.entries(areaMapping)) {
@@ -198,10 +190,25 @@ peerSocket.addEventListener("message", (evt) => {
                     }
 
                     // console.log(resolvedAreaMapping);
-
-                    sendJsonObjectInChunks(resolvedAreaMapping);
                 }
             }
+        }
+    }
+})
+
+console.log("Max message size=" + peerSocket.MAX_MESSAGE_SIZE);
+
+peerSocket.addEventListener("message", (evt) => {
+    let message = evt.data;
+    console.log(JSON.stringify(message));
+    if (message.type == "fetch") {
+        session = message.session;
+        if (!URL) {
+            peerSocket.send({ type: "error", message: "No URL provided!" });
+        } else if (!KEY) {
+            peerSocket.send({ type: "error", message: "No API key provided!" });
+        } else {
+            sendJsonObjectInChunks(resolvedAreaMapping);
         }
     } else if (message.type == "command") {
         let entity_id = message.entity_id;
